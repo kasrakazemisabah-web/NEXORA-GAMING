@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXORA | Gaming Hub</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090914;color:white;font-family:Tahoma,Arial,sans-serif}
+header{padding:25px 7%;background:#111124;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #27204d}
+.logo{font-size:30px;font-weight:bold;color:#a78bfa;letter-spacing:3px}
+nav a{color:white;text-decoration:none;margin:0 10px}
+.hero{text-align:center;padding:85px 20px;background:linear-gradient(135deg,#21104b,#090914 75%)}
+.hero h1{font-size:48px;margin:0 0 15px}
+.hero h1 span{color:#a78bfa}
+.hero p{color:#c4c1d5;font-size:17px}
+.btn{display:inline-block;margin-top:20px;padding:14px 28px;background:#8b5cf6;color:white;text-decoration:none;border-radius:10px}
+.container{max-width:1200px;margin:auto;padding:35px 20px}
+.section-title{font-size:26px;color:#c4b5fd;margin-bottom:22px}
+.search{width:100%;padding:15px;background:#17172b;border:1px solid #393052;border-radius:10px;color:white;font-size:16px;margin-bottom:20px}
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:25px}
+.filters button{padding:10px 18px;background:#19182c;color:white;border:1px solid #42345f;border-radius:8px;cursor:pointer}
+.filters button.active,.filters button:hover{background:#7c3aed}
+.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.game{background:#151527;border:1px solid #292541;border-radius:13px;overflow:hidden;transition:.25s}
+.game:hover{transform:translateY(-6px);border-color:#8b5cf6}
+.game img{width:100%;height:135px;object-fit:cover;background:#25213c}
+.info{padding:15px}
+.info h3{margin:0 0 10px}
+.tag{color:#b9a1ff;font-size:12px}
+.info a{display:block;text-align:center;background:#7139d7;color:white;padding:10px;border-radius:7px;text-decoration:none;margin-top:15px}
+footer{text-align:center;padding:30px;background:#111124;color:#aaa;margin-top:40px}
+@media(max-width:600px){.hero h1{font-size:34px}header{padding:18px;flex-direction:column;gap:12px}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">NEXORA</div>
+<nav><a href="#">خانه</a><a href="#games">بازی‌ها</a><a href="#about">درباره ما</a></nav>
+</header>
+
+<section class="hero">
+<h1>WELCOME TO <span>NEXORA</span></h1>
+<p>دنیای بازی‌ها فقط با یک کلیک فاصله دارد!</p>
+<a href="#games" class="btn">مشاهده بازی‌ها</a>
+</section>
+
+<main class="container" id="games">
+<h2 class="section-title">🎮 آرشیو بازی‌ها</h2>
+<input id="search" class="search" placeholder="اسم بازی مورد نظرت رو جستجو کن..." oninput="render()">
+<div class="filters" id="filters"></div>
+<div class="games" id="gamesList"></div>
+</main>
+
+<section class="container" id="about">
+<h2 class="section-title">درباره NEXORA</h2>
+<p style="color:#bbb;line-height:2">NEXORA یک مرکز معرفی بازی‌های کامپیوتری و کنسولی است. جدیدترین بازی‌ها را کشف کن و وارد دنیای گیمینگ شو!</p>
+</section>
+
+<footer>© 2026 NEXORA | طراحی و توسعه: Kasra Kazemi</footer>
+
+<script>
+const games=[
+["Counter-Strike 2","آنلاین",730],
+["PUBG Battlegrounds","آنلاین",578080],
+["Dota 2","آنلاین",570],
+["Apex Legends","اکشن",1172470],
+["GTA V","اکشن",271590],
+["Red Dead Redemption 2","ماجراجویی",1174180],
+["Cyberpunk 2077","اکشن",1091500],
+["Elden Ring","اکشن",1245620],
+["The Witcher 3","ماجراجویی",292030],
+["Resident Evil 4","ترسناک",2050650],
+["Resident Evil Village","ترسناک",1196590],
+["Outlast","ترسناک",238320],
+["Outlast 2","ترسناک",414700],
+["Phasmophobia","ترسناک",739630],
+["Dead by Daylight","ترسناک",381210],
+["The Forest","ترسناک",242760],
+["Sons of the Forest","ترسناک",1326470],
+["Minecraft","ماجراجویی",1672970],
+["Terraria","ماجراجویی",105600],
+["Hogwarts Legacy","ماجراجویی",990080],
+["Forza Horizon 5","ورزشی",1551360],
+["EA SPORTS FC 25","ورزشی",2669320],
+["Rocket League","ورزشی",252950],
+["Garry's Mod","آنلاین",4000],
+["Rust","آنلاین",252490],
+["Rainbow Six Siege","اکشن",359550],
+["DOOM Eternal","اکشن",782330],
+["God of War","اکشن",1593500],
+["Hollow Knight","ماجراجویی",367520],
+["Subnautica","ماجراجویی",264710]
+];
+
+const categories=["همه","اکشن","ترسناک","ماجراجویی","ورزشی","آنلاین"];
+let selected="همه";
+
+function makeFilters(){
+document.getElementById("filters").innerHTML=categories.map(c=>
+`<button class="${selected===c?'active':''}" onclick="choose('${c}')">${c}</button>`
+).join("");
+}
+
+function choose(c){selected=c;makeFilters();render();}
+
+function render(){
+const q=document.getElementById("search").value.toLowerCase();
+const list=games.filter(g=>
+(selected==="همه"||g[1]===selected)&&g[0].toLowerCase().includes(q)
+);
+document.getElementById("gamesList").innerHTML=list.map(g=>`
+<article class="game">
+<img src="https://cdn.cloudflare.steamstatic.com/steam/apps/${g[2]}/header.jpg"
+alt="${g[0]}" loading="lazy"
+onerror="this.src='https://placehold.co/600x300/17172b/ffffff?text=NEXORA'">
+<div class="info">
+<h3>${g[0]}</h3>
+<span class="tag">${g[1]}</span>
+<a href="https://store.steampowered.com/app/${g[2]}/" target="_blank" rel="noopener">مشاهده بازی</a>
+</div>
+</article>`).join("");
+if(!list.length)document.getElementById("gamesList").innerHTML="<p>بازی پیدا نشد!</p>";
+}
+makeFilters();
+render();
+</script>
+</body>
+</html>
